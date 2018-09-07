@@ -5,9 +5,10 @@ import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
 const toolType = 'textMarker';
 
@@ -107,9 +108,7 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const config = textMarker.getConfiguration();
 
@@ -122,32 +121,25 @@ function onImageRendered (e) {
 
     const color = toolColors.getColorIfActive(data);
 
-    context.save();
+    draw(context, (context) => {
+      setShadow(context, config);
 
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
+      // Draw text
+      const padding = 5;
 
-    // Draw text
-    context.fillStyle = color;
-    const measureText = context.measureText(data.text);
+      data.textWidth = textBoxWidth(context, data.text, padding);
 
-    data.textWidth = measureText.width + 10;
+      const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-    const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+      const options = {
+        centering: {
+          x: true,
+          y: true
+        }
+      };
 
-    const options = {
-      centering: {
-        x: true,
-        y: true
-      }
-    };
-
-    data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
-
-    context.restore();
+      data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+    });
   }
 }
 

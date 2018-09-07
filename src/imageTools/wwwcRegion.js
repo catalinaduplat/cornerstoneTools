@@ -1,12 +1,12 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import clip from '../util/clip.js';
+import { draw, setShadow, drawRect } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -217,7 +217,6 @@ function onImageRendered (e) {
   const eventData = e.detail;
   const element = eventData.element;
   const context = eventData.canvasContext;
-  const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -235,35 +234,13 @@ function onImageRendered (e) {
 
   // Set to the active tool color
   const color = toolColors.getActiveColor();
-
-  // Calculate the rectangle parameters
-  const startPointCanvas = cornerstone.pixelToCanvas(element, startPoint);
-  const endPointCanvas = cornerstone.pixelToCanvas(element, endPoint);
-
-  const left = Math.min(startPointCanvas.x, endPointCanvas.x);
-  const top = Math.min(startPointCanvas.y, endPointCanvas.y);
-  const width = Math.abs(startPointCanvas.x - endPointCanvas.x);
-  const height = Math.abs(startPointCanvas.y - endPointCanvas.y);
-
-  const lineWidth = toolStyle.getToolWidth();
   const config = wwwcRegion.getConfiguration();
 
   // Draw the rectangle
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.rect(left, top, width, height);
-  context.stroke();
-
-  context.restore();
+  draw(context, (context) => {
+    setShadow(context, config);
+    drawRect(context, element, startPoint, endPoint, { color });
+  });
 }
 
 // --- Mouse tool enable / disable --- ///

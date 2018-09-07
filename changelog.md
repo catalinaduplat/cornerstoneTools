@@ -6,6 +6,45 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.9] - 2018-07-24
+### Changed
+- Make use of drawRect, drawCircle and drawLine in the tools (thanks @timleslie)
+
+## [2.3.8] - 2018-07-12
+### Added
+- Added Webpack-web-server and hotReloader for development
+- Added invert effect on mouse zoom (thanks @posegae)
+- Added tool data docs page
+- Added new tool Eraser that Erases marks from other tools (thanks @dlwire)
+- Added Freehand Sculpter tool (#431) (thanks @JamesAPetts)
+
+### Changed
+- Changed more functions drawing.js being applied to the tools: path, drawLine, setShadow (thanks @timleslie)
+
+### Fixed
+- Fixed dragProbe touch issue (issue/390)
+- Fixed paintbrush tool, Improvements to brush tool and example (issue/434) (thanks @JamesAPetts)
+
+## [2.3.7] - 2018-07-05
+### Added
+- Added an utility file drawing.js to make it simpler to draw shapes (thanks @timleslie)
+
+### Changed
+- Revamped freehandROI pencil mode and added handle editing (thanks @JamesAPetts)
+- Deprecated drawCircle.js and drawEllipse.js files and recommended use of drawing.js instead (thanks @timleslie)
+- Replaced all duplicated context declarations and its initial transformation with getNewContext (thanks @timleslie)
+- Using EVENTS.NEW_IMAGE constant instead of 'cornerstonenewimage' string on scroll.js
+- Changed the way things are drawn. Making use of draw method of drawing.js to follow W3C canvas state save/restore specification (thanks @timleslie)
+
+### Fixed
+- Fixed incorrect center point for rotation calculations on rotation tool (thanks @medihack)
+- Prevent stackImagePositionOffsetSynchronizer from throwing an exception when no imagePlane is set (thanks @freund17)
+- Fixed errors being thrown after usage of magnify tool (thanks @dlwire)
+
+## [2.3.6] - 2018-06-06
+### Fixed
+- Fixed X and Y values on Length tool (thanks @catalinaduplat)
+
 ## [2.3.5] - 2018-05-28
 ### Changed
 - Updated package.json dependencies to latest versions
